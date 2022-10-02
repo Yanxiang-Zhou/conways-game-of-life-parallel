@@ -1,5 +1,3 @@
-// Team member: Guangyu Min, Jiayuan Chen, Yanxiang Zhou
-
 #include <stdio.h> /*for printf()*/
 #include <stdlib.h>/*for rand(),malloc(),free()*/
 #include <mpi.h>
@@ -18,16 +16,10 @@
 
 #define TAG 0
 
-/*
-* Author: Guangyu Min, Jiayuan Chen, Yanxiang Zhou
-*/
-
-/** @brief Provide a default parameter for vec_to_str **/
 template <typename T>
 std::string vec_to_str(const std::vector<T>& vec,
                        const std::string& delim = ",");
 
-/** @brief A function which converts a vector to a string **/
 template <typename T>
 std::string vec_to_str(const std::vector<T>& vec, const std::string& delim) {
   std::ostringstream oss;
@@ -49,7 +41,6 @@ int coord_to_index(int * coords, int proc_num_row, int proc_num_col);
 void allocate_row_col(int* cell_num_row, int* cell_num_col, int size, int m, int n, int proc_num_row, int proc_num_col);
 void allocate_disp(int* disps, int* cell_num_row, int* cell_num_col, int n, int proc_num_row, int proc_num_col);
 void allocate_extent(int* extent,int* cell_num_col,int proc_num_row,int proc_num_col);
-// void create_datatype(MPI_Datatype* derivedtype, int local_num_row, int local_num_col, int start1,int start2,int subsize1,int subsize2)
 int** allocate_memory(int rows,int columns);
 void create_datatype(MPI_Datatype* derivedtype, int start1,int start2,int subsize1,int subsize2,int local_num_row, int local_num_col);
 void find_next_state(int i,int j,int sum,int** &local_matrix, int** &next_gen);
@@ -61,9 +52,6 @@ void game(MPI_Comm comm_2D,int my_rank,int NPROWS,int NPCOLS,int MAX_GENS,int lo
 
 std::vector<int> local_cells;
 int changed;
-
-// int local_num_row;
-// int local_num_col;
 
 int main(int argc, char** argv){
 	MPI_Init(&argc, &argv);
@@ -114,21 +102,7 @@ int main(int argc, char** argv){
 		printf("Elapsed time (sequential): %.4f seconds\n\n",local_finish);
 
     } else {
-    /* You implement this */
-		/*************************************************************************/
-
-		/*
-		size: number of total procs
-		rank: rank of a certain proc
-		m: row number of cell grid
-		n: column number of cell grid
-		gen: generations set to pass through
-		global_data: input
-		output_data: output
-		*/
-
-		/************************************************************************************************************/
-		/* Setup virtual 2D topology*/
+   
 		int dims[2] = {0,0};
 		MPI_Dims_create(size, 2, dims);
 
@@ -156,8 +130,6 @@ int main(int argc, char** argv){
 		int recv_cnt;
 
 		int max_num_row, max_num_col, max_block_size;
-
-	/************************************************************************************************************/
 
 		MPI_Barrier(comm_2D);
 
@@ -234,18 +206,8 @@ int main(int argc, char** argv){
 		}
 
 		MPI_Recv(&recv_cnt, 1, MPI_INT, 0, 0, comm_2D, &stat);
-    	MPI_Recv(&data_for_receive[0], recv_cnt, MPI_INT, 0, 1, comm_2D, &stat);
+    		MPI_Recv(&data_for_receive[0], recv_cnt, MPI_INT, 0, 1, comm_2D, &stat);
 
-
-		// MPI_Scatterv(&data_for_scatter[0], &scatter_sendcnts[0], &scatter_disps[0], MPI_INT,
-		// 			&data_for_receive[0], max_block_size, MPI_INT, 0, comm_2D);
-
-		// format of local_cells(with_padding):
-		//
-		//     0 0 0
-		//     0 1 0
-		//     0 0 0
-		//
 
 		std::vector<int> local_cells((local_num_col+2) * (local_num_row+2));
 		int ori_index, padding_index;
@@ -257,12 +219,6 @@ int main(int argc, char** argv){
 			}
 		}
 
-		/**********************************************/
-		// local_cells: cells on each processor(original status given by input data, padding = 1, padding elements are 0)
-		// local_num_row: number of rows on each processor
-		// local_num_col: number of cols on each processor
-
-		/**********************************************/
 
 		/**create local 2D matrix for updating**/
 		int** local_matrix;
